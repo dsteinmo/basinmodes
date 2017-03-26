@@ -8,10 +8,8 @@ Globals2D;
 % Polynomial order used for approximation 
 N = 1; 
 
-%memory estimate: bytes=0; for i=1:length(blah), bytes = bytes + blah(i).bytes, end
-
 %load mesh
-load('ontario_gmsh.mat'); %disc with Csanady's radius choice = 67.5 km
+load('ontario_gmsh.mat');
 
 
 StartUp2D;  %had to tweak NODETOL in this - apparently 1e-12 is too small.

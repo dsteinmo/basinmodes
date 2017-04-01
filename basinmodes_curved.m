@@ -5,7 +5,7 @@ Globals2D;
 
 %------------------------------------------------------------------- 
 N = 2; % Polynomial order used for approximation
-MESH_FILE = 'ontario_gmsh.mat'; 
+MESH_FILE = 'ontario_gmsh.mat';
 NUM_H_REFINES = 0;
 
 USEMEANDEPTH = false; %use mean depth instead of full bathymetry?
@@ -25,12 +25,19 @@ StartUp2D;  %had to tweak NODETOL in this - apparently 1e-12 is too small.
 BuildBCMaps2D;
 
 %H-refinment, anyone?
-
 for ii=1:NUM_H_REFINES
     refineflag= ones(K,1);
     Hrefine2D(refineflag);
     StartUp2D;
 end
+
+% Below assumes boundary is a single closed curve with edge data in canonical ordering.
+x_bdry = node(edge([1:end 1], 1), 1);
+y_bdry = node(edge([1:end 1], 1), 2);
+[x_t, y_t, tt] = ParametricSpline(x_bdry, y_bdry);
+
+curved = MakeCurvedEdges_derek(Wall, x_t, y_t, tt);
+straight = setdiff(1:K, curved);
 
 % build cubature information
 CubatureOrder = floor(2*(N+1)*3/2);
@@ -41,7 +48,7 @@ NGauss = (Nint+1);
 gauss = GaussFaceMesh2D(NGauss);
 
 %interpolate bathymetry profile to unstructured mesh.
-H = interp2(depthdata.x,depthdata.y,depthdata.H,x,y);
+H = interp2(depthdata.x,depthdata.y,depthdata.H,x,y,'linear');
 
 if ~isempty(find(vmapP==0, 1))
     disp('vmapP is bad node map, try relaxing NODETOL in StartUp2D');
@@ -50,7 +57,7 @@ end
 
 A = dgintcubature(ones(Np,K), cub);
 
-Hbar = (1/A)*dgintcubature(H, cub) %basin mean depth
+Hbar = (1/A)*dgintcubature(H, cub); %basin mean depth
 
 if USEMEANDEPTH == true
     H = Hbar*ones(Np,K);

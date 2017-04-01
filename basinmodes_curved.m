@@ -1,24 +1,32 @@
 clear;
 close all;
-
 setPaths;
-
 Globals2D;
 
-% Polynomial order used for approximation 
-N = 2;
+%------------------------------------------------------------------- 
+N = 2; % Polynomial order used for approximation
+MESH_FILE = 'ontario_gmsh.mat'; 
+NUM_H_REFINES = 0;
 
-%load mesh
-load('ontario_gmsh.mat');
+USEMEANDEPTH = false; %use mean depth instead of full bathymetry?
+ 
+f = 2*(2*pi/(3600*24))*sin(43.7*pi/180); %43.7 deg. lattitude, (for model great lake, From Csanady 1967)
+g = 9.81;
 
+numpot = 100;  %number of potential basis functions
+numstrm = 100; %number of streamfunction basis functions
+
+DUMP_TO_FILE = false;
+%-------------------------------------------------------------------
+
+load(MESH_FILE);
 
 StartUp2D;  %had to tweak NODETOL in this - apparently 1e-12 is too small.
 BuildBCMaps2D;
 
 %H-refinment, anyone?
-numHRefines = 0;
 
-for ii=1:numHRefines
+for ii=1:NUM_H_REFINES
     refineflag= ones(K,1);
     Hrefine2D(refineflag);
     StartUp2D;
@@ -32,12 +40,6 @@ Nint = ceil(2*N/2);
 NGauss = (Nint+1); 
 gauss = GaussFaceMesh2D(NGauss);
 
-USEMEANDEPTH = false; %use mean depth instead of full bathymetry?
-
-numpot = 100;  %number of potential basis functions
-numstrm = 100; %number of streamfunction basis functions
-
-
 %interpolate bathymetry profile to unstructured mesh.
 H = interp2(depthdata.x,depthdata.y,depthdata.H,x,y);
 
@@ -45,11 +47,6 @@ if ~isempty(find(vmapP==0, 1))
     disp('vmapP is bad node map, try relaxing NODETOL in StartUp2D');
     return;
 end
-
-%Physical params. (for model great lake, From Csanady 1967)
-f= 2*(2*pi/(3600*24))*sin(43.7*pi/180); %43.7 deg. lattitude
-
-g=9.81;
 
 A = dgintcubature(ones(Np,K), cub);
 
@@ -268,4 +265,6 @@ for jj=1:2:8
     drawnow;
 end
 
-% save('ontario_allmodes.mat');
+if DUMP_TO_FILE == true
+    save('basinmodes_output.mat');
+end

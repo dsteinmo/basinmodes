@@ -1,3 +1,6 @@
-[Nv,VX, VY, K, EToV,BCType,node,edge] = readmsh('ontario.msh');
+MSH_FILE = 'ontario2.msh';
+MAT_FILE = 'ontario_gmsh2.mat';
 
-save('ontario_gmsh.mat','Nv','VX','VY','K','EToV','BCType','node','edge','depthdata');
+[Nv,VX, VY, K, EToV,BCType,node,edge] = readmsh(MSH_FILE);
+
+save(MAT_FILE,'Nv','VX','VY','K','EToV','BCType','node','edge','depthdata');

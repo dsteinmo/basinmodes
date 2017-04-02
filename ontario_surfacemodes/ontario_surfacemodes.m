@@ -1,11 +1,12 @@
 clear;
 close all;
+addpath '../'
 setPaths;
 Globals2D;
 
 %------------------------------------------------------------------- 
 N = 2; % Polynomial order used for approximation
-MESH_FILE = 'ontario_gmsh.mat';
+MESH_FILE = 'ontario_gmsh2.mat';
 NUM_H_REFINES = 0;
 
 USEMEANDEPTH = false; %use mean depth instead of full bathymetry?

@@ -248,7 +248,6 @@ for jj=1:2:8
      
     colorbar; 
     title(['T= ' num2str(2*pi/abs(myeigs(jj+start))/3600) ' h']); 
-    caxis([-10 10]);
     drawnow;
 end
 

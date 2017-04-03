@@ -85,7 +85,7 @@ for k1=1:K
 
     % Set penalty scaling
     %gtau = 20*(N+1)*(N+1)*hinv; %orig
-    gtau = 100*(N+1)*(N+1)*hinv; %derek.
+    gtau = 2*100*100*(N+1)*(N+1)*hinv; %derek.
     %note: changing this '20' to '100' seems to make
     %the inhomog. dirichlet BC case fail. odd.
 

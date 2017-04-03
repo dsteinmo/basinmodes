@@ -15,6 +15,7 @@ x_bdry = node(edge([1:end 1], 1), 1);
 y_bdry = node(edge([1:end 1], 1), 2);
 [x_t, y_t, tt] = ParametricSpline(x_bdry, y_bdry);
 
+curved = [];
 curved = MakeCurvedEdges_derek(Wall, x_t, y_t, tt);
 straight = setdiff(1:K, curved);
 

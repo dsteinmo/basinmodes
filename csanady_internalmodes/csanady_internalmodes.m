@@ -5,7 +5,7 @@ setPaths;
 Globals2D;
 
 %------------------------------------------------------------------- 
-N = 4; % Polynomial order used for approximation
+N = 2; % Polynomial order used for approximation
 MESH_FILE = 'circlemesh_nohole.mat'; 
 NUM_H_REFINES = 0;
 
@@ -57,10 +57,10 @@ basinmodes_curved;
 %Kelvin Modes (sigma/f)
 %------------
 
-% n        Analytic (Csanady1967)         DG
-%---       ----------------------       -------
-% 1               -0.0689               -0.069239
-% 2               -0.1373               -0.138464
-% 4               -0.2747               -0.276887
-% 9               -0.6211               -0.62270
-% 14              -0.9333               -0.96812
+% n        Analytic (Csanady1967)         DG (hrefines=0)			DG (hrefines=1)
+%---       ----------------------       ---------					---------------
+% 1               -0.0689               -0.069239					-0.069256
+% 2               -0.1373               -0.138464					-0.138278
+% 4               -0.2747               -0.276887					-0.276629
+% 9               -0.6211               -0.62270					-0.621931
+% 14              -0.9333               -0.96812					-0.966997 *(~3.6% error!)

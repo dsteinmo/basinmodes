@@ -28,7 +28,11 @@ NGauss = (Nint+1);
 gauss = GaussFaceMesh2D(NGauss);
 
 %interpolate bathymetry profile to unstructured mesh.
-H = interp2(depthdata.x,depthdata.y,depthdata.H,x,y,'linear');
+if ANALYTIC_DEPTH == false
+    H = interp2(depthdata.x,depthdata.y,depthdata.H,x,y,'linear');
+else
+    H = H_analytic(x, y);
+end
 
 if ~isempty(find(vmapP==0, 1))
     disp('vmapP is bad node map, try relaxing NODETOL in StartUp2D');

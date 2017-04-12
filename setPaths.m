@@ -1,3 +1,5 @@
-addpath ~/work/gitrepos/basinmodes/NUDG/Codes2D
-addpath ~/work/gitrepos/basinmodes/NUDG/ServiceRoutines
-addpath ~/work/gitrepos/basinmodes/NUDG/Codes1D
+root = pwd;
+
+addpath(strcat([root '/NUDG/Codes2D']))
+addpath(strcat([root '/NUDG/ServiceRoutines']))
+addpath(strcat([root '/NUDG/Codes1D']))

@@ -1,0 +1,233 @@
+
+% Driver script for solving the 2D Helmholtz equation with spatially
+% varying diffusivity
+
+Globals2D;
+
+% Polynomial order used for approximation 
+N = 2;
+
+%convergence problems near corners on a box-domain
+%probably because the normal changes discontinuously
+%within a single element
+
+%oddly, the divergence away from the correct solution
+%always seems to happen at a lone corner with both flux choices.
+
+
+%note that central flux is going to have bad convergence
+%for odd choices of N.
+ 
+      
+
+%possible remedies: (1) add more elements near the corner
+%                   (2) increase order so stencil talks to more elements
+%                   than just nearby ones.
+
+%Things to check: 
+%There may be a bug in H&W's implementation of central flux
+%so write it "the long way" and compare
+
+%still could do algebraic simplification to your LDG implementation
+%call it, "ldgOPT" or something.
+
+% Read in Mesh
+%[Nv, VX, VY, K, EToV] = MeshReaderGambitBC2D('circA01.neu'); %Dirichlet circle (no curvilinear elements)
+%[Nv, VX, VY, K, EToV] = MeshReaderGambitBC2D('circA01derek.neu'); %same, but with neumann conditions instead of dirichlet.
+%[Nv, VX, VY, K, EToV] = MeshReaderGambitBC2D('circA01a.neu'); %diamond thing.
+%[Nv,VX,VY,K,EToV] = MeshReaderGambitBC2D('squareireg2.neu'); %11-element square. [-1,1]x[-1,1]. Dirichlet conditions
+%[Nv,VX,VY,K,EToV] = MeshReaderGambitBC2D('squareireg2neu.neu'); %same, but with Neuman conditions
+%[Nv,VX, VY, K, EToV,BCType] = GenBox(); %fixed problems with this due to using CorrectBCTable (version 1)
+[Nv,VX,VY,K,EToV,BCType] = GenCircle();
+%load('boxnocornersK128.mat');
+%load('boxnocornersK800.mat');
+%load('boxnocornersK288.mat');
+
+
+
+% Initialize solver and construct grid and metric
+StartUp2D;
+
+% set up boundary conditions
+BuildBCMaps2D;
+
+figure(16);
+PlotMesh2D;
+axis tight; title('K=294');
+xlabel('x'); ylabel('y');
+drawnow;
+%return;
+
+%set spatially dependent diffusivity
+%a = 0*cos(pi*x).*cos(pi*y) + 5;
+%a = cos(pi*x).*cos(pi*y);
+%a = -2*(pi^2)*sin(pi*x).*sin(pi*y);
+%a=ones(size(x));
+a = x.*y+2;
+%a = x.*y; %Note this may be a bad choice: singular at x,y=0,0
+
+% set up right hand side for homogeneous Helmholtz problem 
+[A,M] = Helm2Dsdd(a); %same as above but with spatial dep. diffusivity.
+
+% set up right hand side for homogeneous Helmholtz problem with LDG flux
+[ALDG,MLDG] = Helm2DsddLDG(a); %same as above but with spatial dep. diffusivity.
+
+% set up Dirichlet boundary conditions
+uD = zeros(Nfp*Nfaces, K);
+%uD(mapD) = sin(pi*Fx(mapD)).*sin(pi*Fy(mapD));
+
+% set up Neumann boundary conditions (this only kicks in if mesh supports it)
+qN = zeros(Nfp*Nfaces, K);
+%qN(mapN) = nx(mapN).*(pi*cos(pi*Fx(mapN)).*sin(pi*Fy(mapN))) + ...
+%          ny(mapN).*(pi*sin(pi*Fx(mapN)).*cos(pi*Fy(mapN))) ;
+
+
+% evaluate boundary condition contribution to rhs
+Aqbc = PoissonIPDGbc2D(uD, qN);
+
+
+% set up right hand side forcing
+%force = pi*y.*cos(pi*x).*sin(pi*y) - 2*pi^2*x.*y.*sin(pi*x).*sin(pi*y) + pi*x.*sin(pi*x).*cos(pi*y) - sin(pi*x).*sin(pi*y);  %use this for a=xy, Dirichlet
+force1 = -pi*y.*sin(pi*x).*cos(pi*y)-2*pi^2*x.*y.*cos(pi*x).*cos(pi*y)-pi*x.*cos(pi*x).*sin(pi*y)-cos(pi*x).*cos(pi*y); %use this for a=xy, Neumann
+
+%what if force = Divergence of \vec{stuff}?
+%set components of the 2-vector
+stuffx = -pi*(x.*y+2).*sin(pi*x).*cos(pi*y)-(1/2/pi)*sin(pi*x).*cos(pi*y);
+stuffy = -pi*(x.*y+2).*cos(pi*x).*sin(pi*y)-(1/2/pi)*cos(pi*x).*sin(pi*y);
+divstuff = Div2D(stuffx,stuffy);  %compute weak divergence
+dstuffx = zeros(Nfp*Nfaces,K); dstuffy = zeros(Nfp*Nfaces,K);
+dstuffx(:) = (stuffx(vmapM)-stuffx(vmapP));  %form field differences
+dstuffy(:) = (stuffy(vmapM)-stuffy(vmapP));
+fluxstuff = (nx.*dstuffx + ny.*dstuffy)/2.0; %compute central flux
+force = divstuff - LIFT*(Fscale.*fluxstuff);
+%force = J.*((invV'*invV)*(divstuff - LIFT*(Fscale.*fluxstuff)));
+
+%figure(18);
+%PlotField2D(N,x,y,force); shading interp; colorbar; view([0 90]); drawnow; return;
+
+
+
+%rhs = -MassMatrix*(J.*force) + Aqbc;  %Use this if you're solvling -Lap*u= f
+rhs = MassMatrix*(J.*force) + Aqbc;  %Use this if you're solving Lap*u = f
+%rhs = MassMatrix*(J.*force);
+
+% solve system
+%Matlab uses UMFPACK's symbolic LU with automatic re-ordering, then numeric
+%LU, followed by UMFPACK's triangular solve
+disp('inverting with backslash...');
+tic;
+u = A\rhs(:);
+toc;
+u = reshape(u, Np, K);
+%try LU-factorization
+% disp('computing LU factorization of central flux...');
+% tic;
+% [L,U,P,Q] = lu(A);
+% toc;
+% disp('done.');
+% disp('inverting with lu-factors...');
+% tic;
+% u1 = Q*(U\(L\(P*rhs(:))));
+% toc;
+
+% disp('Inverting with LDG (backslash)...');
+% tic;
+% uLDG = ALDG\rhs(:);
+% toc;
+% %norm(uLDG-u1,2)
+% uLDG = reshape(uLDG, Np, K);
+
+
+% disp('computing LU factorization of LDG operator...');
+% tic;
+% [LLDG,ULDG,PLDG,QLDG] = lu(ALDG);
+% tic;
+% 
+% 
+% 
+% disp('computing symmetric cuthill mckee pre-ordering (central)'); %this is working!
+% tic;
+% P = symrcm(A);
+% AP = A(P,P);
+% myrhs = rhs(:); 
+% myrhs = myrhs(P);
+% toc;
+% [Lp,Up,Pp,Qp] = lu(AP);
+% disp('inverting with pre-ordering and lu...');
+% tic;
+% u2 = Qp*(Up\(Lp\(Pp*myrhs)));
+% toc;
+% u2(P) = u2;  %this is working now
+% 
+% disp('computing symmetric cuthill mckee pre-ordering (LDG)'); %this is working!
+% tic;
+% PL = symrcm(ALDG);
+% ALDGP = ALDG(PL,PL);
+% myrhs = rhs(:); 
+% myrhs = myrhs(PL);
+% toc;
+% [LpLDG,UpLDG,PpLDG,QpLDG] = lu(ALDGP);
+% disp('inverting with pre-ordering and lu...');
+% tic;
+% u2 = QpLDG*(UpLDG\(LpLDG\(PpLDG*myrhs)));
+% toc;
+% u2(P) = u2;  %this is working now
+
+
+
+%uexact = sin(pi*x).*sin(pi*y);  %exact solution for Dirichlet conditions
+uexact = cos(pi*x).*cos(pi*y);  %exact solution for Neumann conditions
+
+
+figure(1);
+PlotField2D(N,x,y,u); view([0 90]); colorbar;
+%title('Solution - homogenous Neumann and Central flux');
+title('u_{central}');
+%figure(2);
+%PlotMesh2D;
+% figure(3);
+% PlotField2D(N,x,y,force); view([0 90]); colorbar;
+% title('forcing - as a DG divergence');
+%figure(4);
+%PlotField2D(N,x,y,a); view([0 90]); colorbar;
+%title('diffusivity');
+%figure(5);
+%PlotField2D(N,x,y,uexact); view([0 90]); colorbar; title('exact solution');
+centralerror = norm(uexact(:)-u(:),2)/norm(uexact(:),2)
+figure(6);
+PlotField2D(N,x,y,uLDG); view([0 90]); colorbar;
+title('u_{LDG}');
+LDGerror = norm(uLDG(:)-uexact(:),2)/norm(uexact(:),2)
+% figure(6);
+% PlotField2D(N,x,y,force1); view([0 90]); colorbar;
+% title('forcing -exact');
+% figure(8);
+% subplot(4,3,1);
+% spy(A); title('Central flux');
+% disp(['A Fullness %: ' num2str(nnz(A)/numel(A))]);
+% subplot(4,3,2);
+% spy(L); title('central L');
+% disp(['L Fullness %: ' num2str(nnz(L)/numel(L))]);
+% subplot(4,3,3);
+% spy(U); title('central U');
+% disp(['U Fullness %: ' num2str(nnz(U)/numel(U))]);
+% subplot(4,3,4);
+% spy(Lp); title('central L (pre-ordered)');
+% disp(['L (pre-ordered) Fullness %: ' num2str(nnz(Lp)/numel(Lp))]);
+% subplot(4,3,5);
+% spy(Up); title('central U (pre-ordered)');
+% disp(['U (pre-ordered) Fullness %: ' num2str(nnz(Up)/numel(Up))]);
+% subplot(4,3,6);
+% spy(AP); title('Central flux (pre-ordered)');
+% subplot(4,3,7);
+% spy(ALDG); title('LDG flux');
+% subplot(4,3,8);
+% spy(ALDGP); title('LDG (pre-ordered)');
+% subplot(4,3,9);
+% spy(LLDG); title('LDG L');
+% subplot(4,3,10);
+% spy(ULDG); title('LDG U');
+% subplot(4,3,11);
+% spy(LpLDG); title('LDG L (pre-ordered)');
+% subplot(4,3,12);
+% spy(UpLDG); title('LDG U (pre-ordered)');

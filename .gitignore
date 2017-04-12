@@ -1,6 +1,5 @@
 octave-workspace
 *.mat
 *.zip
-*.msh
 *.asc
 NUDG/

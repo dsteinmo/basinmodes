@@ -11,8 +11,8 @@ for ii=1:NUM_H_REFINES
 end
 
 % Below assumes boundary is a single closed curve with edge data in canonical ordering.
-x_bdry = node(edge([1:end 1], 1), 1);
-y_bdry = node(edge([1:end 1], 1), 2);
+x_bdry = node(edge([1:length(edge) 1], 1), 1);
+y_bdry = node(edge([1:length(edge) 1], 1), 2);
 [x_t, y_t, tt] = ParametricSpline(x_bdry, y_bdry);
 
 curved = [];

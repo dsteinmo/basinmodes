@@ -7,12 +7,15 @@ addpath(root);
 setPaths;
 cd(currDir);
 
+Globals2D;
+
 %------------------------------------------------------------------- 
 N = 2; % Polynomial order used for approximation
-MESH_FILE = 'circlemesh_nohole.mat';
+MESH_FILE = '../circlemesh_nohole.mat';
 NUM_H_REFINES = 0;
 
 USEMEANDEPTH = false; %use mean depth instead of full bathymetry?
+ANALYTIC_DEPTH = true;
 
 f = 2*(2*pi/(3600*24))*sin(43.7*pi/180); %43.7 deg. lattitude, (for model great lake, From Csanady 1967)
 g = 9.81;
@@ -34,17 +37,8 @@ gprime = epsilon*g;  %reduced gravity
 H1 = Hepi+Hhyp;  %total lake depth, (equivalent depth for barotropic mode)
 H2 = epsilon*((Hepi*Hhyp)/(Hepi+Hhyp)); %equivalent depth for internal mode.
 
-c1 = sqrt(g*H1);
-c2 = sqrt(g*H2);
-% We don't have any cartesian bathymetry data for idealized lake, so we fake it here.
-depthdata = [];
-Nx = 100;
-Ny = 100;
-r0 = 67.5e3;
-xc = linspace(-r0, r0, Nx);
-yc = linspace(-r0, r0, Ny);
-[depthdata.x, depthdata.y] = meshgrid(xc, yc);
-depthdata.H = H2*ones(Ny, Nx);
+% Equivalent Depth is a constant. We give a trivial function-handle to make the main code happy.
+H_analytic = @(x,y)H2 + 0*x;
 %-------------------------------------------------------------------
 
 basinmodes_curved;

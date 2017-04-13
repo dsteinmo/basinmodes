@@ -1,7 +1,12 @@
 clear;
 close all;
-addpath '../'
+currDir = pwd;
+cd ../
+root = pwd;
+addpath(root);
 setPaths;
+cd(currDir);
+
 Globals2D;
 
 %------------------------------------------------------------------- 
@@ -10,6 +15,7 @@ MESH_FILE = 'ontario_gmsh2.mat';
 NUM_H_REFINES = 0;
 
 USEMEANDEPTH = false; %use mean depth instead of full bathymetry?
+ANALYTIC_DEPTH = false;
  
 f = 2*(2*pi/(3600*24))*sin(43.7*pi/180); %43.7 deg. lattitude.
 g = 9.81;

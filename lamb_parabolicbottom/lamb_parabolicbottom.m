@@ -1,12 +1,17 @@
 clear;
 close all;
-addpath '../';
+currDir = pwd;
+cd ../
+root = pwd;
+addpath(root);
 setPaths;
+cd(currDir);
+
 Globals2D;
 
 %------------------------------------------------------------------- 
 N = 2; % Polynomial order used for approximation
-MESH_FILE = 'circlemesh_nohole.mat'; 
+MESH_FILE = '../circlemesh_nohole.mat';
 NUM_H_REFINES = 0;
 
 USEMEANDEPTH = false; %use mean depth instead of full bathymetry?

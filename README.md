@@ -1,4 +1,4 @@
-#Getting Started
+# Getting Started
 
     git clone https://github.com/dsteinmo/basinmodes.git
     cd basinmodes
@@ -23,7 +23,7 @@ Then (in Matlab/Octave):
 
 Then copy the resulting .mat file into the ontario_surfacemodes/ folder and ensure the driver script is referencing the .mat file appropriately.
 
-#Visualization
+# Visualization
 
 To interactively scroll through the modes (with left and right arrow keys) run the scrollmodes.m script:
 	

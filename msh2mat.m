@@ -1,4 +1,4 @@
-MSH_FILE = 'ontario2.msh';
+MSH_FILE = 'ontario.msh';
 MAT_FILE = 'ontario_gmsh2.mat';
 
 [Nv,VX, VY, K, EToV,BCType,node,edge] = readmsh(MSH_FILE);

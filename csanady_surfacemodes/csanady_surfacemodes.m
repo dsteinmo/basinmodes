@@ -27,9 +27,15 @@ DUMP_TO_FILE = false;
 
 % Depth is constant 75.0 m. We give a trivial function-handle to make the main code happy.
 H_analytic = @(x,y)75.0 + 0*x;
+
+CURVED_IMPLEMENTATION = true;
 %-------------------------------------------------------------------
 
-basinmodes_curved;
+if CURVED_IMPLEMENTATION == true
+    basinmodes_curved;
+else
+    basinmodes;
+end
 
 % Analytic n=1,m=0 mode: -6.96 (Csanday 1967)
 % Analytic n=1,m=0 mode:  7.80

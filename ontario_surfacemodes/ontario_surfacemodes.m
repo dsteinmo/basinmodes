@@ -24,6 +24,12 @@ numpot = 100;  %number of potential basis functions
 numstrm = 100; %number of streamfunction basis functions
 
 DUMP_TO_FILE = false;
+
+CURVED_IMPLEMENTATION = true;
 %-------------------------------------------------------------------
 
-basinmodes_curved;
+if CURVED_IMPLEMENTATION == true
+    basinmodes_curved;
+else
+    basinmodes;
+end

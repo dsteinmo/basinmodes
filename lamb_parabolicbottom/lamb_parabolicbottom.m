@@ -47,8 +47,14 @@ f = sqrt(beta)*(c2/r0);
 
 H_analytic = @(x,y)H2*(1-(x.^2 + y.^2)/r0^2) + 0.005*H2;
 
-basinmodes_curved;
+CURVED_IMPLEMENTATION = true;
 
+%------------------------------------------------------------------- 
+if CURVED_IMPLEMENTATION == true
+    basinmodes_curved;
+else
+    basinmodes;
+end
 % beta: 40
 % --------
 % numstrm+82  (582) => (s=1, n=3, cw),  1.0482

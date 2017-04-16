@@ -39,10 +39,15 @@ H2 = epsilon*((Hepi*Hhyp)/(Hepi+Hhyp)); %equivalent depth for internal mode.
 
 % Equivalent Depth is a constant. We give a trivial function-handle to make the main code happy.
 H_analytic = @(x,y)H2 + 0*x;
+
+CURVED_IMPLEMENTATION = true;
 %-------------------------------------------------------------------
 
-basinmodes_curved;
-
+if CURVED_IMPLEMENTATION == true
+    basinmodes_curved;
+else
+    basinmodes;
+end
 %Baroclinic Modes (sigma/f). DG N=2, numpot=500, numstrm=500, hrefines=0
 %--------------
 %Gravest Poincare mode

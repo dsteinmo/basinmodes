@@ -1,49 +1,26 @@
-clear;
-close all;
-
-setPaths;
-
-Globals2D;
-
-% Polynomial order used for approximation 
-N =1; 
-
-%load mesh
-load('ontario_gmsh.mat');
+load(MESH_FILE);
 
 
 StartUp2D;  %had to tweak NODETOL in this - apparently 1e-12 is too small.
 BuildBCMaps2D;
 
-%H-refinment, anyone?
-
-numHRefines = 0;
-
-for ii=1:numHRefines
+for ii=1:NUM_H_REFINES
     refineflag= ones(K,1);
     Hrefine2D(refineflag);
     StartUp2D;
 end
 
-USEMEANDEPTH = false; %use mean depth instead of full bathymetry?
-
-
-numpot = 100;  %number of potential basis functions
-numstrm = 100; %number of streamfunction basis functions
-
-
 %interpolate bathymetry profile to unstructured mesh.
-H = interp2(depthdata.x,depthdata.y,depthdata.H,x,y);
+if ANALYTIC_DEPTH == false
+    H = interp2(depthdata.x,depthdata.y,depthdata.H,x,y,'linear');
+else
+    H = H_analytic(x, y);
+end
 
 if ~isempty(find(vmapP==0, 1))
     disp('vmapP is bad node map, try relaxing NODETOL in StartUp2D');
     return;
 end
-
-%Physical params. (for model great lake, From Csanady 1967)
-f= 2*(2*pi/(3600*24))*sin(43.7*pi/180); %43.7 deg. lattitude
-
-g=9.81;
 
 A = dgint(ones(Np,K),V,J); %first, get the area of our basin by integrating '1'.
 
@@ -252,14 +229,16 @@ figure(1); clf; colormap(darkjet);
 start=numstrm+1;
 for jj=1:2:8
     subplot(2,2,ceil(jj/2));
-    PlotField2D(N,x,y,real(eta{jj+start})); view([0 90]); 
+    PlotField2D(N,x,y,real(eta{jj+start})); 
+    view([0 90]); 
     axis equal;
     axis tight;
      
     colorbar; 
     title(['T= ' num2str(2*pi/abs(myeigs(jj+start))/3600) ' h']); 
-    caxis([-10 10]);
     drawnow;
 end
 
-save('ontario_allmodes.mat');
+if DUMP_TO_FILE == true
+    save('basinmodes_output.mat');
+end

@@ -66,3 +66,7 @@ end
 % 4               -0.2747               -0.276887					-0.276629
 % 9               -0.6211               -0.62270					-0.621931
 % 14              -0.9333               -0.96812					-0.966997 *(~3.6% error!)
+
+load('kevin_table.mat');
+disp('relative error');
+(kevin_table(:,5)-abs(scaledeigs(numpot+1:2:numpot+28)))./kevin_table(:,5)

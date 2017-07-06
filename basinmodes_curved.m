@@ -192,11 +192,9 @@ end
 
 disp('checking coefficients symmetries');
 norm(a+a',2)
-norm(b+b',2)
 norm(c+b',2)
 norm(d+d',2)
 disp('done.');
-
 
 nudiag = diag(nu);
 

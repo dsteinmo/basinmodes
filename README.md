@@ -18,7 +18,7 @@ For machines with gmsh installed, this can be done (in bash) vioa:
     $ chmod +x geo2msh.sh
     $ ./geo2msh.sh ontario.geo 
 
-Then (in Matlab/Octave). Note: You will need to update the top of `msh2mat.m` to match your input and output filenames:
+Then (in Matlab/Octave), run `msh2mat`. Note: You will need to update the top of `msh2mat.m` to match your input and output filenames.
 
     > msh2mat
 

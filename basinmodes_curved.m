@@ -74,7 +74,7 @@ efuns = efuns(:,2:end);
 
 phi = cell(numpot,1);  %Allocate cell array for homogenous Neuman eigenfns
 
-disp('checking normalization of phis...');
+%disp('checking normalization of phis...');
 for jj=1:numpot
     phitmp = efuns(:,jj);
     
@@ -85,9 +85,9 @@ for jj=1:numpot
     phi{jj} = phi{jj}/sqrt(alpha);
     phi{jj} = phi{jj}*(sqrt(A)*c0*Hbar)/sqrt(lambda(jj));
     
-    disp(['Rel. error in normalization: ' num2str((lambda(jj)*dgintcubature(phi{jj}.*phi{jj}, cub)-A*c02*Hbar^2)/(A*c02*Hbar^2))]); %works good
+    %disp(['Rel. error in normalization: ' num2str((lambda(jj)*dgintcubature(phi{jj}.*phi{jj}, cub)-A*c02*Hbar^2)/(A*c02*Hbar^2))]); %works good
 end
-disp('done check.');
+%disp('done check.');
 
 %Build Laplacian operator with Dirichlet BC's 
 ids = find(BCType == Wall | BCType == Neuman);
@@ -106,7 +106,7 @@ oldd =d;
 [mu,inds] = sort(d,'ascend');
 efuns = efuns(:,inds);
 
-disp('checking normalization of psis...');
+%disp('checking normalization of psis...');
 psi = cell(numstrm,1);  %Allocate cell array for homogenous Dirichlet eigenfns
 for jj=1:numstrm
     psitmp = efuns(:,jj);
@@ -116,7 +116,7 @@ for jj=1:numstrm
     alpha = dgintcubature(psi{jj}.*psi{jj}, cub);
     psi{jj} = ((sqrt(A)*c0*Hbar)/sqrt(alpha)/sqrt(mu(jj))).*psi{jj};
     
-    disp(['Rel. error in normalization: ' num2str((mu(jj)*dgintcubature(psi{jj}.*psi{jj}, cub)-A*c02*Hbar^2)/(A*c02*Hbar^2))]); %works good
+    %disp(['Rel. error in normalization: ' num2str((mu(jj)*dgintcubature(psi{jj}.*psi{jj}, cub)-A*c02*Hbar^2)/(A*c02*Hbar^2))]); %works good
 end
 
 %Now construct irrotational and solenoidal basis functions
@@ -190,11 +190,11 @@ for ii=1:numstrm
     end
 end
 
-disp('checking coefficients symmetries');
-norm(a+a',2)
-norm(c+b',2)
-norm(d+d',2)
-disp('done.');
+%disp('checking coefficients symmetries');
+%norm(a+a',2)
+%norm(c+b',2)
+%norm(d+d',2)
+%disp('done.');
 
 nudiag = diag(nu);
 

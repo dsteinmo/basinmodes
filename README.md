@@ -26,11 +26,11 @@ Then copy the resulting .mat file into the ontario_surfacemodes/ folder and ensu
 
 # Visualization
 
-To interactively scroll through the modes (with left and right arrow keys) run the scrollmodes.m script:
+To interactively scroll through the modes (with `⇐` and `⇒` arrow keys) run the `scrollmodes.m` script:
 
     > scrollmodes
 
 *Note: (Currently not working in GNU octave)*
 
-* `animate_mode` can be modified and used to animate one period of a particular mode that is specified at the top of the script.
+* `animate_mode.m` can be modified and used to animate one period of a particular mode that is specified at the top of the script.
 

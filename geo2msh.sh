@@ -1,2 +1,2 @@
 #!/bin/bash
-gmsh -2 $1
+gmsh -format msh22 -2 "$1"

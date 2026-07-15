@@ -42,7 +42,7 @@ To interactively scroll through the modes (with `⇐` and `⇒` arrow keys) run 
 
 ## Citing this work
 
-Results from using the code herein was published in 'Ocean Nodelling' in 2019. BibTeX:
+Results from using the code herein was published in 'Ocean Modelling' in 2019. BibTeX:
 ```
 @article{steinmoeller2019calculating,
   title={Calculating basin-scale free oscillations in lakes on a rotating Earth},

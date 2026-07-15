@@ -30,7 +30,7 @@ Then copy the resulting .mat file into the ontario_surfacemodes/ folder and ensu
 
 ## Theoretical description
 
-See the publication in https://github.com/dsteinmo/basinmodes#citing-this-work for theoretical description. For a more detailed look, see chapter 6 from Derek Steinmoeller's Ph.D. Thesis (University of Waterloo, 2014).
+See the publication referenced [below](#citing-this-work) for theoretical background. For a more detailed look, see [chapter 6 from Derek Steinmoeller's Ph.D. Thesis (University of Waterloo, 2014)](https://raw.githubusercontent.com/dsteinmo/basinmodes/refs/heads/master/docs/Steinmoeller_Derek_ch_6.pdf).
 
 ## Visualization
 

@@ -30,7 +30,5 @@ To interactively scroll through the modes (with left and right arrow keys) run t
 
     > scrollmodes
 
-*Note: (Currently not working in GNU octave)*
-
 * `animate_mode` can be modified and used to animate one period of a particular mode that is specified at the top of the script.
 

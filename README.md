@@ -28,6 +28,10 @@ Then (in Matlab/Octave), run `msh2mat`. Note: You will need to update the top of
 
 Then copy the resulting .mat file into the ontario_surfacemodes/ folder and ensure the driver script (e.g., ontario_surfaces.m) is referencing the .mat file appropriately.
 
+## Theoretical description
+
+See the publication in https://github.com/dsteinmo/basinmodes#citing-this-work for theoretical description. For a more detailed look, see chapter 6 from Derek Steinmoeller's Ph.D. Thesis (University of Waterloo, 2014).
+
 ## Visualization
 
 To interactively scroll through the modes (with `⇐` and `⇒` arrow keys) run the `scrollmodes.m` script:

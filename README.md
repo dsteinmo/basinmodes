@@ -13,22 +13,22 @@ All physical and computational parameters (and mesh) are specified within the dr
 
 The circular-basin test cases (Csanady; Lamb) use the circlemesh_nohole.mat mesh that is checked into the repository root folder. For Lake Ontario test case, you will need to generate the mesh file and copy it into the ontario_surfacemodes/ folder.
 
-For machines with gmsh installed, this can be done with (in bash):
+For machines with gmsh installed, this can be done (in bash) vioa:
 
     $ chmod +x geo2msh.sh
     $ ./geo2msh.sh ontario.geo 
 
-Then (in Matlab/Octave):
+Then (in Matlab/Octave), run `msh2mat`. Note: You will need to update the top of `msh2mat.m` to match your input and output filenames.
 
     > msh2mat
 
-Then copy the resulting .mat file into the ontario_surfacemodes/ folder and ensure the driver script is referencing the .mat file appropriately.
+Then copy the resulting .mat file into the ontario_surfacemodes/ folder and ensure the driver script (e.g., ontario_surfaces.m) is referencing the .mat file appropriately.
 
 # Visualization
 
-To interactively scroll through the modes (with left and right arrow keys) run the scrollmodes.m script:
+To interactively scroll through the modes (with `⇐` and `⇒` arrow keys) run the `scrollmodes.m` script:
 
     > scrollmodes
 
-* `animate_mode` can be modified and used to animate one period of a particular mode that is specified at the top of the script.
+* `animate_mode.m` can be modified and used to animate one period of a particular mode that is specified at the top of the script.
 

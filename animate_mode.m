@@ -11,6 +11,8 @@
 %mode=201; %gravest gravity/Kelvin mode = 201.
 %mode=204;
 
+mode = numstrm + 1;
+
 %I believe half of the Kelvin modes (the negative frequency ones that are rotating clock-wise) are
 %degenerate, and show up here as an artifice of the fact that the equations
 %were set up such that the operator would be self-adjont (Hermitian).
